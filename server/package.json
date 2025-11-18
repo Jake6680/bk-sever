@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start:client": "node client-server.js",
+    "start:admin": "node admin-server.js",
+    "start:both": "node client-server.js & node admin-server.js"
   },
   "keywords": ["serial", "validation", "express"],
   "author": "",
