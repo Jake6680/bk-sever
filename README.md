@@ -4,7 +4,7 @@ PC 시리얼 번호 관리 및 검증 시스템입니다.
 
 ## 📋 시스템 구성
 
-이 프로젝트는 3개의 주요 컴포넌트로 구성되어 있습니다:
+이 프로젝트는 4개의 주요 컴포넌트로 구성되어 있습니다:
 
 ### 1. **Ubuntu Server** (서버)
 - PC 시리얼 번호를 저장하고 관리
@@ -24,6 +24,14 @@ PC 시리얼 번호 관리 및 검증 시스템입니다.
 - 1시간마다 자동 재검증
 - 백그라운드 실행 (시스템 트레이)
 - 기술 스택: Electron
+
+### 4. **Python Client** ⭐ (추천)
+- 기존 파이썬 프로그램에 import하여 사용
+- PC 시리얼 번호 자동 감지
+- 간단한 API로 검증
+- 백그라운드 자동 검증 지원
+- 콜백 및 데코레이터 패턴 지원
+- 기술 스택: Python 3.x
 
 ---
 
@@ -92,6 +100,35 @@ set SERVER_URL=http://192.168.1.100:3000
 npm start
 ```
 
+### 4️⃣ Python Client 사용 ⭐ (추천)
+
+```bash
+# 파이썬 클라이언트 디렉토리로 이동
+cd client-python
+
+# 의존성 설치
+pip install -r requirements.txt
+
+# 간단한 사용
+python example_simple.py
+```
+
+**기존 프로그램에 통합:**
+```python
+from serial_validator import SerialValidator
+
+# 검증기 생성 (자동 시작)
+validator = SerialValidator(
+    server_url="http://localhost:3000",
+    auto_start=True  # 백그라운드 자동 검증
+)
+
+# 한 번만 검증
+result = validator.verify()
+if result['valid']:
+    print("✅ 유효한 라이선스")
+```
+
 ---
 
 ## 📖 사용 시나리오
@@ -129,27 +166,36 @@ npm start
 
 ```
 bk-sever/
-├── server/              # Ubuntu 서버
-│   ├── server.js        # Express 서버
-│   ├── database.js      # SQLite 데이터베이스
+├── server/                    # Ubuntu 서버
+│   ├── server.js              # Express 서버
+│   ├── database.js            # SQLite 데이터베이스
 │   ├── package.json
 │   └── README.md
 │
-├── admin-gui/           # Windows 관리자 GUI
-│   ├── main.js          # Electron 메인 프로세스
-│   ├── index.html       # UI
-│   ├── renderer.js      # 렌더러 프로세스
+├── admin-gui/                 # Windows 관리자 GUI
+│   ├── main.js                # Electron 메인 프로세스
+│   ├── index.html             # UI
+│   ├── renderer.js            # 렌더러 프로세스
 │   ├── package.json
 │   └── README.md
 │
-├── client/              # Windows 클라이언트
-│   ├── main.js          # Electron 메인 프로세스
-│   ├── index.html       # UI
-│   ├── renderer.js      # 렌더러 프로세스
+├── client/                    # Windows 클라이언트 (Electron)
+│   ├── main.js                # Electron 메인 프로세스
+│   ├── index.html             # UI
+│   ├── renderer.js            # 렌더러 프로세스
 │   ├── package.json
 │   └── README.md
 │
-└── README.md            # 이 파일
+├── client-python/             # Python 클라이언트 ⭐
+│   ├── serial_validator.py   # 메인 모듈
+│   ├── example_simple.py      # 간단한 예제
+│   ├── example_with_callback.py
+│   ├── example_in_app.py      # 프로그램 통합 예제
+│   ├── example_decorator.py   # 데코레이터 예제
+│   ├── requirements.txt
+│   └── README.md
+│
+└── README.md                  # 이 파일
 ```
 
 ---
@@ -317,7 +363,8 @@ MIT License
 
 - [Server 상세 가이드](./server/README.md)
 - [Admin GUI 상세 가이드](./admin-gui/README.md)
-- [Client 상세 가이드](./client/README.md)
+- [Electron Client 상세 가이드](./client/README.md)
+- [Python Client 상세 가이드](./client-python/README.md) ⭐
 
 ---
 
