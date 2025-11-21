@@ -355,15 +355,15 @@
             }
 
             table tbody tr td {
-                display: block;
-                text-align: right;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
                 padding: 12px 15px;
                 border-bottom: 1px solid #f0f0f0;
                 width: 100%;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
                 font-size: 15px;
                 line-height: 1.5;
+                gap: 10px;
             }
 
             table tbody tr td:last-child {
@@ -372,10 +372,21 @@
 
             table tbody tr td::before {
                 content: attr(data-label);
-                float: left;
                 font-weight: 600;
                 color: #667eea;
                 font-size: 14px;
+                flex-shrink: 0;
+                min-width: 80px;
+            }
+
+            /* 데이터 부분 스타일 */
+            table tbody tr td strong,
+            table tbody tr td > *:not(.btn-small) {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                word-break: break-word;
+                text-align: right;
+                flex: 1;
             }
 
             /* 시리얼 번호 강조 */
@@ -384,15 +395,25 @@
                 padding: 15px;
                 background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
                 border-bottom: 2px solid #dee2e6;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            table tbody tr td:first-child::before {
+                color: #495057;
+                width: 100%;
             }
 
             table tbody tr td:first-child strong {
                 font-size: 16px;
                 color: #667eea;
-            }
-
-            table tbody tr td:first-child::before {
-                color: #495057;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                word-break: break-all;
+                width: 100%;
+                text-align: left;
             }
 
             /* 상태 뱃지 모바일 최적화 */
@@ -404,10 +425,13 @@
 
             /* 작업 버튼 세로 배치 */
             table tbody tr td:last-child {
-                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
                 padding: 15px;
                 background: #f8f9fa;
                 border-top: 1px solid #e9ecef;
+                gap: 8px;
             }
 
             table tbody tr td:last-child::before {
@@ -415,21 +439,11 @@
             }
 
             .btn-small {
-                display: block;
                 width: 100%;
-                margin: 8px 0;
-                max-width: 100%;
                 padding: 14px 20px;
                 font-size: 15px;
                 font-weight: 600;
-            }
-
-            .btn-small:first-child {
-                margin-top: 0;
-            }
-
-            .btn-small:last-child {
-                margin-bottom: 0;
+                margin: 0;
             }
 
             /* 로딩 및 빈 상태 */
@@ -486,15 +500,18 @@
             table tbody tr td {
                 padding: 10px 12px;
                 font-size: 14px;
+                gap: 8px;
             }
 
             table tbody tr td::before {
                 font-size: 13px;
+                min-width: 70px;
             }
 
             table tbody tr td:first-child {
                 font-size: 15px;
                 padding: 12px;
+                gap: 4px;
             }
 
             table tbody tr td:first-child strong {
@@ -505,7 +522,10 @@
             .btn-small {
                 padding: 12px 16px;
                 font-size: 14px;
-                margin: 6px 0;
+            }
+
+            table tbody tr td:last-child {
+                gap: 6px;
             }
 
             /* 상태 뱃지 크기 조정 */
