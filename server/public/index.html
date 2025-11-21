@@ -347,20 +347,23 @@
                 display: block;
                 margin-bottom: 15px;
                 border: 2px solid #dee2e6;
-                border-radius: 8px;
+                border-radius: 10px;
                 background: white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                 width: 100%;
+                overflow: hidden;
             }
 
             table tbody tr td {
                 display: block;
                 text-align: right;
-                padding: 10px 15px;
+                padding: 12px 15px;
                 border-bottom: 1px solid #f0f0f0;
                 width: 100%;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
+                font-size: 15px;
+                line-height: 1.5;
             }
 
             table tbody tr td:last-child {
@@ -372,19 +375,61 @@
                 float: left;
                 font-weight: 600;
                 color: #667eea;
+                font-size: 14px;
+            }
+
+            /* 시리얼 번호 강조 */
+            table tbody tr td:first-child {
+                font-size: 16px;
+                padding: 15px;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-bottom: 2px solid #dee2e6;
+            }
+
+            table tbody tr td:first-child strong {
+                font-size: 16px;
+                color: #667eea;
+            }
+
+            table tbody tr td:first-child::before {
+                color: #495057;
+            }
+
+            /* 상태 뱃지 모바일 최적화 */
+            table tbody tr td .status-badge {
+                display: inline-block;
+                padding: 6px 14px;
+                font-size: 13px;
             }
 
             /* 작업 버튼 세로 배치 */
             table tbody tr td:last-child {
                 text-align: center;
                 padding: 15px;
+                background: #f8f9fa;
+                border-top: 1px solid #e9ecef;
+            }
+
+            table tbody tr td:last-child::before {
+                display: none;
             }
 
             .btn-small {
                 display: block;
                 width: 100%;
-                margin: 5px 0;
+                margin: 8px 0;
                 max-width: 100%;
+                padding: 14px 20px;
+                font-size: 15px;
+                font-weight: 600;
+            }
+
+            .btn-small:first-child {
+                margin-top: 0;
+            }
+
+            .btn-small:last-child {
+                margin-bottom: 0;
             }
 
             /* 로딩 및 빈 상태 */
@@ -435,6 +480,43 @@
 
             .search-box input {
                 font-size: 16px; /* iOS에서 자동 줌 방지 */
+            }
+
+            /* 카드 내부 데이터 크기 조정 */
+            table tbody tr td {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            table tbody tr td::before {
+                font-size: 13px;
+            }
+
+            table tbody tr td:first-child {
+                font-size: 15px;
+                padding: 12px;
+            }
+
+            table tbody tr td:first-child strong {
+                font-size: 15px;
+            }
+
+            /* 버튼 크기 조정 */
+            .btn-small {
+                padding: 12px 16px;
+                font-size: 14px;
+                margin: 6px 0;
+            }
+
+            /* 상태 뱃지 크기 조정 */
+            table tbody tr td .status-badge {
+                padding: 5px 12px;
+                font-size: 12px;
+            }
+
+            /* 카드 간격 조정 */
+            table tbody tr {
+                margin-bottom: 12px;
             }
         }
     </style>
