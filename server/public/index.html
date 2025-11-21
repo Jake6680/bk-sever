@@ -11,11 +11,18 @@
             box-sizing: border-box;
         }
 
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         .container {
@@ -25,6 +32,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            width: 100%;
         }
 
         .header {
@@ -155,6 +163,11 @@
             font-size: 14px;
         }
 
+        .table-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -262,7 +275,16 @@
         /* 모바일 최적화 */
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 10px;
+                max-width: 100%;
+            }
+
+            .main-content {
+                overflow-x: hidden;
             }
 
             .header h1 {
@@ -279,6 +301,8 @@
 
             .left-panel, .right-panel {
                 padding: 20px 15px;
+                max-width: 100%;
+                overflow-x: hidden;
             }
 
             .section-title {
@@ -299,13 +323,24 @@
                 font-size: 1.5em;
             }
 
+            /* 테이블 래퍼 모바일 최적화 */
+            .table-wrapper {
+                overflow-x: visible;
+                overflow-y: visible;
+            }
+
             /* 테이블을 카드 레이아웃으로 변경 */
             table {
                 border: 0;
+                width: 100% !important;
             }
 
             table thead {
                 display: none;
+            }
+
+            table tbody {
+                width: 100%;
             }
 
             table tbody tr {
@@ -315,6 +350,7 @@
                 border-radius: 8px;
                 background: white;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                width: 100%;
             }
 
             table tbody tr td {
@@ -322,6 +358,9 @@
                 text-align: right;
                 padding: 10px 15px;
                 border-bottom: 1px solid #f0f0f0;
+                width: 100%;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             table tbody tr td:last-child {
@@ -345,6 +384,7 @@
                 display: block;
                 width: 100%;
                 margin: 5px 0;
+                max-width: 100%;
             }
 
             /* 로딩 및 빈 상태 */
@@ -356,6 +396,14 @@
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                border-radius: 0;
+            }
+
             .header h1 {
                 font-size: 1.5em;
             }
@@ -364,8 +412,29 @@
                 font-size: 0.85em;
             }
 
+            .header {
+                padding: 15px 10px;
+            }
+
+            .left-panel, .right-panel {
+                padding: 15px 10px;
+            }
+
+            .section-title {
+                font-size: 1.2em;
+            }
+
             .stat-card h3 {
                 font-size: 1.3em;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                font-size: 16px; /* iOS에서 자동 줌 방지 */
+            }
+
+            .search-box input {
+                font-size: 16px; /* iOS에서 자동 줌 방지 */
             }
         }
     </style>
@@ -434,7 +503,7 @@
                 </div>
 
                 <!-- 테이블 -->
-                <div style="overflow-x: auto;">
+                <div class="table-wrapper">
                     <table id="serialTable">
                         <thead>
                             <tr>
