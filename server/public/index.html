@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -299,7 +300,8 @@
                 padding: 20px 15px;
             }
 
-            .left-panel, .right-panel {
+            .left-panel,
+            .right-panel {
                 padding: 20px 15px;
                 max-width: 100%;
                 overflow-x: hidden;
@@ -349,7 +351,7 @@
                 border: 2px solid #dee2e6;
                 border-radius: 10px;
                 background: white;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 width: 100%;
                 overflow: hidden;
             }
@@ -381,7 +383,7 @@
 
             /* 데이터 부분 스타일 */
             table tbody tr td strong,
-            table tbody tr td > *:not(.btn-small) {
+            table tbody tr td>*:not(.btn-small) {
                 word-wrap: break-word;
                 overflow-wrap: break-word;
                 word-break: break-word;
@@ -475,7 +477,8 @@
                 padding: 15px 10px;
             }
 
-            .left-panel, .right-panel {
+            .left-panel,
+            .right-panel {
                 padding: 15px 10px;
             }
 
@@ -489,11 +492,13 @@
 
             .form-group input,
             .form-group textarea {
-                font-size: 16px; /* iOS에서 자동 줌 방지 */
+                font-size: 16px;
+                /* iOS에서 자동 줌 방지 */
             }
 
             .search-box input {
-                font-size: 16px; /* iOS에서 자동 줌 방지 */
+                font-size: 16px;
+                /* iOS에서 자동 줌 방지 */
             }
 
             /* 카드 내부 데이터 크기 조정 */
@@ -541,14 +546,23 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <h1>🔐 시리얼 번호 관리 시스템</h1>
             <p>관리자 대시보드 - 시리얼 번호 추가, 수정, 삭제 및 검증</p>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-small" id="tabBtnSerials" onclick="switchTab('serials')"
+                    style="background:rgba(255,255,255,0.2); border:1px solid white; color:white; font-weight:bold;">📋
+                    시리얼 관리</button>
+                <button class="btn btn-small" id="tabBtnLogs" onclick="switchTab('logs')"
+                    style="background:rgba(255,255,255,0.2); border:1px solid white; color:white; opacity:0.7;">📜 접속
+                    로그</button>
+            </div>
         </div>
 
-        <div class="main-content">
+        <div id="tab-serials" class="main-content">
             <!-- 왼쪽 패널: 시리얼 추가 폼 -->
             <div class="left-panel">
                 <h2 class="section-title">시리얼 번호 추가</h2>
@@ -626,6 +640,35 @@
                 </div>
             </div>
         </div>
+
+        <!-- 접속 로그 탭 -->
+        <div id="tab-logs" class="main-content" style="display: none; grid-template-columns: 1fr;">
+            <div class="right-panel" style="width: 100%; padding: 30px;">
+                <h2 class="section-title">
+                    📜 접속 로그 (최근 100건)
+                    <button class="btn btn-small btn-info" onclick="loadAccessLogs()" style="float:right;">🔄
+                        새로고침</button>
+                </h2>
+                <div class="table-wrapper">
+                    <table id="logTable">
+                        <thead>
+                            <tr>
+                                <th>시간</th>
+                                <th>시리얼 번호</th>
+                                <th>IP 주소</th>
+                                <th>결과</th>
+                                <th>상세 사유</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTableBody">
+                            <tr>
+                                <td colspan="5" class="loading">로그를 불러오는 중...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -636,7 +679,88 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadSerials();
             setTodayDate();
+            // 30초마다 로그 자동 갱신 (로그 탭 활성 시)
+            setInterval(() => {
+                const logsTab = document.getElementById('tab-logs');
+                if (logsTab && logsTab.style.display !== 'none') {
+                    loadAccessLogs();
+                }
+            }, 30000);
         });
+
+        // 탭 전환
+        function switchTab(tabName) {
+            const serialsTab = document.getElementById('tab-serials');
+            const logsTab = document.getElementById('tab-logs');
+            const btnSerials = document.getElementById('tabBtnSerials');
+            const btnLogs = document.getElementById('tabBtnLogs');
+
+            if (tabName === 'serials') {
+                serialsTab.style.display = 'grid';
+                logsTab.style.display = 'none';
+                btnSerials.style.opacity = '1';
+                btnLogs.style.opacity = '0.7';
+                btnSerials.style.fontWeight = 'bold';
+                btnLogs.style.fontWeight = 'normal';
+            } else {
+                serialsTab.style.display = 'none';
+                logsTab.style.display = 'grid';
+                btnSerials.style.opacity = '0.7';
+                btnLogs.style.opacity = '1';
+                btnSerials.style.fontWeight = 'normal';
+                btnLogs.style.fontWeight = 'bold';
+                loadAccessLogs();
+            }
+        }
+
+        // 접속 로그 불러오기
+        async function loadAccessLogs() {
+            try {
+                const response = await fetch(`${API_BASE}/api/access-logs`);
+                const result = await response.json();
+
+                if (result.success) {
+                    displayAccessLogs(result.data);
+                } else {
+                    console.error(result.message);
+                }
+            } catch (error) {
+                console.error('로그 로드 실패:', error);
+            }
+        }
+
+        // 접속 로그 표시
+        function displayAccessLogs(logs) {
+            const tbody = document.getElementById('logTableBody');
+
+            if (!logs || logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#999;">접속 기록이 없습니다.</td></tr>';
+                return;
+            }
+
+            // 최신순 정렬 (ID 역순)
+            logs.sort((a, b) => b.id - a.id);
+
+            tbody.innerHTML = logs.map(log => {
+                const isSuccess = log.success === 1;
+                const statusBadge = isSuccess
+                    ? '<span class="status-badge status-active">성공</span>'
+                    : '<span class="status-badge status-expired">실패</span>';
+
+                // 날짜 포맷팅
+                const date = new Date(log.accessed_at).toLocaleString('ko-KR');
+
+                return `
+                    <tr>
+                        <td>${date}</td>
+                        <td><strong>${log.serial_number}</strong></td>
+                        <td>${log.ip_address}</td>
+                        <td>${statusBadge}</td>
+                        <td style="color: ${isSuccess ? '#155724' : '#721c24'}">${log.failure_reason || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
 
         // 오늘 날짜 설정
         function setTodayDate() {
@@ -688,8 +812,8 @@
                 const statusClass = isExpired ? 'status-expired' : 'status-active';
                 const statusText = isExpired ? '만료' : '활성';
                 const ipText = serial.bound_ip ? serial.bound_ip : '<span style="color:#aaa">미등록</span>';
-                const unbindBtn = serial.bound_ip 
-                    ? `<button class="btn btn-small btn-info" onclick="resetIp('${serial.serial_number}')" style="background:#ffc107;color:#000;">IP초기화</button>` 
+                const unbindBtn = serial.bound_ip
+                    ? `<button class="btn btn-small btn-info" onclick="resetIp('${serial.serial_number}')" style="background:#ffc107;color:#000;">IP초기화</button>`
                     : '';
 
                 return `
@@ -869,4 +993,5 @@
         }
     </script>
 </body>
+
 </html>

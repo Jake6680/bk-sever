@@ -9,7 +9,8 @@ const {
   updateSerial,
   deleteSerial,
   verifySerial,
-  clearSerialIP
+  clearSerialIP,
+  getAllAccessLogs
 } = require('./database');
 
 const app = express();
@@ -48,6 +49,24 @@ app.get('/api/serials', (req, res) => {
       return res.status(500).json({
         success: false,
         message: '시리얼 번호 조회 실패',
+        error: err.message
+      });
+    }
+    res.json({
+      success: true,
+      data: rows,
+      count: rows.length
+    });
+  });
+});
+
+// 모든 접속 로그 조회
+app.get('/api/access-logs', (req, res) => {
+  getAllAccessLogs((err, rows) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        message: '접속 로그 조회 실패',
         error: err.message
       });
     }
