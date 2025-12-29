@@ -10,7 +10,8 @@ const {
   deleteSerial,
   verifySerial,
   clearSerialIP,
-  getAllAccessLogs
+  getAllAccessLogs,
+  clearAllAccessLogs
 } = require('./database');
 
 const app = express();
@@ -74,6 +75,23 @@ app.get('/api/access-logs', (req, res) => {
       success: true,
       data: rows,
       count: rows.length
+    });
+  });
+});
+
+// 모든 접속 로그 삭제
+app.delete('/api/access-logs', (req, res) => {
+  clearAllAccessLogs((err) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        message: '접속 로그 삭제 실패',
+        error: err.message
+      });
+    }
+    res.json({
+      success: true,
+      message: '모든 접속 로그가 삭제되었습니다.'
     });
   });
 });

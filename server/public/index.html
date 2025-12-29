@@ -646,8 +646,11 @@
             <div class="right-panel" style="width: 100%; padding: 30px;">
                 <h2 class="section-title">
                     📜 접속 로그 (최근 100건)
-                    <button class="btn btn-small btn-info" onclick="loadAccessLogs()" style="float:right;">🔄
-                        새로고침</button>
+                    <div style="float:right;">
+                        <button class="btn btn-small btn-danger" onclick="clearAccessLogs()"
+                            style="margin-right: 5px;">🗑️ 전체 삭제</button>
+                        <button class="btn btn-small btn-info" onclick="loadAccessLogs()">🔄 새로고침</button>
+                    </div>
                 </h2>
                 <div class="table-wrapper">
                     <table id="logTable">
@@ -726,6 +729,29 @@
                 }
             } catch (error) {
                 console.error('로그 로드 실패:', error);
+            }
+        }
+
+        // 접속 로그 전체 삭제
+        async function clearAccessLogs() {
+            if (!confirm('정말로 모든 접속 로그를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/access-logs`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(result.message);
+                    loadAccessLogs(); // 목록 갱신
+                } else {
+                    alert('삭제 실패: ' + result.message);
+                }
+            } catch (error) {
+                alert('서버 오류: ' + error.message);
             }
         }
 

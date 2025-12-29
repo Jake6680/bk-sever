@@ -190,6 +190,12 @@ function getAccessLogsBySerial(serialNumber, callback) {
   db.all(query, [serialNumber], callback);
 }
 
+// 모든 접속 로그 삭제
+function clearAllAccessLogs(callback) {
+  const query = 'DELETE FROM access_logs';
+  db.run(query, [], callback);
+}
+
 // 시리얼 번호 검증 (IP 검증 포함)
 function verifySerialWithIP(serialNumber, clientIP, callback) {
   getSerial(serialNumber, (err, row) => {
@@ -279,7 +285,8 @@ module.exports = {
   clearSerialIP,
   addAccessLog,
   getAllAccessLogs,
-  getAccessLogsBySerial
+  getAccessLogsBySerial,
+  clearAllAccessLogs
 };
 
 // force update
