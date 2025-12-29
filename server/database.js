@@ -3,6 +3,7 @@ const path = require('path');
 
 // 데이터베이스 파일 경로
 const dbPath = path.join(__dirname, 'serials.db');
+console.log(`[Database] Path: ${dbPath}`);
 
 // 데이터베이스 연결
 const db = new sqlite3.Database(dbPath, (err) => {
@@ -160,12 +161,21 @@ function clearSerialIP(serialNumber, callback) {
 }
 
 // 접속 로그 기록
+// 접속 로그 기록
 function addAccessLog(serialNumber, ipAddress, success, failureReason, callback) {
   const query = `
     INSERT INTO access_logs (serial_number, ip_address, success, failure_reason)
     VALUES (?, ?, ?, ?)
   `;
-  db.run(query, [serialNumber, ipAddress, success ? 1 : 0, failureReason || null], callback);
+  console.log(`[Log] Access Log 추가 시도: ${serialNumber}, ${ipAddress}, ${success}`);
+  db.run(query, [serialNumber, ipAddress, success ? 1 : 0, failureReason || null], (err) => {
+    if (err) {
+      console.error(`[Log] Access Log 추가 실패: ${err.message}`);
+    } else {
+      console.log(`[Log] Access Log 추가 성공`);
+    }
+    if (callback) callback(err);
+  });
 }
 
 // 모든 접속 로그 조회
