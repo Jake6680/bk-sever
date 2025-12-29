@@ -611,6 +611,7 @@
                             <tr>
                                 <th>시리얼 번호</th>
                                 <th>유효기간</th>
+                                <th>IP 주소</th>
                                 <th>상태</th>
                                 <th>설명</th>
                                 <th>작업</th>
@@ -618,7 +619,7 @@
                         </thead>
                         <tbody id="serialTableBody">
                             <tr>
-                                <td colspan="5" class="loading">로딩 중...</td>
+                                <td colspan="6" class="loading">로딩 중...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -678,7 +679,7 @@
             const tbody = document.getElementById('serialTableBody');
 
             if (serials.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">등록된 시리얼 번호가 없습니다.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">등록된 시리얼 번호가 없습니다.</td></tr>';
                 return;
             }
 
@@ -686,14 +687,20 @@
                 const isExpired = new Date(serial.expiry_date) < new Date();
                 const statusClass = isExpired ? 'status-expired' : 'status-active';
                 const statusText = isExpired ? '만료' : '활성';
+                const ipText = serial.bound_ip ? serial.bound_ip : '<span style="color:#aaa">미등록</span>';
+                const unbindBtn = serial.bound_ip 
+                    ? `<button class="btn btn-small btn-info" onclick="resetIp('${serial.serial_number}')" style="background:#ffc107;color:#000;">IP초기화</button>` 
+                    : '';
 
                 return `
                     <tr>
                         <td data-label="시리얼 번호"><strong>${serial.serial_number}</strong></td>
                         <td data-label="유효기간">${serial.expiry_date}</td>
+                        <td data-label="IP 주소">${ipText}</td>
                         <td data-label="상태"><span class="status-badge ${statusClass}">${statusText}</span></td>
                         <td data-label="설명">${serial.description || '-'}</td>
                         <td data-label="작업">
+                            ${unbindBtn}
                             <button class="btn btn-small btn-info" onclick="verifySerial('${serial.serial_number}')">검증</button>
                             <button class="btn btn-small btn-success" onclick="editSerial('${serial.serial_number}')">수정</button>
                             <button class="btn btn-small btn-danger" onclick="deleteSerial('${serial.serial_number}')">삭제</button>
@@ -701,6 +708,27 @@
                     </tr>
                 `;
             }).join('');
+        }
+
+        // IP 초기화
+        async function resetIp(serialNumber) {
+            if (!confirm(`시리얼번호 ${serialNumber}의 IP 바인딩을 해제하시겠습니까?`)) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/serials/${serialNumber}/ip`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('listSuccessAlert', 'IP 바인딩이 해제되었습니다.');
+                    loadSerials();
+                } else {
+                    showAlert('listErrorAlert', result.message);
+                }
+            } catch (error) {
+                showAlert('listErrorAlert', '서버 오류: ' + error.message);
+            }
         }
 
         // 시리얼 추가

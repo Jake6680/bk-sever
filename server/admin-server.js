@@ -8,7 +8,8 @@ const {
   addSerial,
   updateSerial,
   deleteSerial,
-  verifySerial
+  verifySerial,
+  clearSerialIP
 } = require('./database');
 
 const app = express();
@@ -96,7 +97,7 @@ app.post('/api/serials', (req, res) => {
     });
   }
 
-  addSerial(serial_number, expiry_date, description || '', function(err) {
+  addSerial(serial_number, expiry_date, description || '', function (err) {
     if (err) {
       if (err.message.includes('UNIQUE')) {
         return res.status(409).json({
@@ -136,7 +137,7 @@ app.put('/api/serials/:serial', (req, res) => {
     });
   }
 
-  updateSerial(serialNumber, expiry_date, description || '', function(err) {
+  updateSerial(serialNumber, expiry_date, description || '', function (err) {
     if (err) {
       return res.status(500).json({
         success: false,
@@ -163,7 +164,7 @@ app.put('/api/serials/:serial', (req, res) => {
 app.delete('/api/serials/:serial', (req, res) => {
   const serialNumber = req.params.serial;
 
-  deleteSerial(serialNumber, function(err) {
+  deleteSerial(serialNumber, function (err) {
     if (err) {
       return res.status(500).json({
         success: false,
@@ -182,6 +183,33 @@ app.delete('/api/serials/:serial', (req, res) => {
     res.json({
       success: true,
       message: '시리얼 번호가 삭제되었습니다.'
+    });
+  });
+});
+
+// 시리얼의 IP 바인딩 해제
+app.delete('/api/serials/:serial/ip', (req, res) => {
+  const serialNumber = req.params.serial;
+
+  clearSerialIP(serialNumber, function (err) {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        message: 'IP 바인딩 해제 실패',
+        error: err.message
+      });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '시리얼 번호를 찾을 수 없습니다.'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'IP 바인딩이 해제되었습니다.'
     });
   });
 });
