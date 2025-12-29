@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시리얼 번호 관리 시스템</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 0;
+        }
+
+        .left-panel {
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 2px solid #e0e0e0;
+        }
+
+        .right-panel {
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+            width: auto;
+            margin: 0 5px;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                border-right: none;
+                border-bottom: 2px solid #e0e0e0;
+            }
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 10px;
+                max-width: 100%;
+            }
+
+            .main-content {
+                overflow-x: hidden;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 0.95em;
+            }
+
+            .header {
+                padding: 20px 15px;
+            }
+
+            .left-panel, .right-panel {
+                padding: 20px 15px;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            .section-title {
+                font-size: 1.3em;
+            }
+
+            /* 통계 카드 세로 배치 */
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-card h3 {
+                font-size: 1.5em;
+            }
+
+            /* 테이블 래퍼 모바일 최적화 */
+            .table-wrapper {
+                overflow-x: visible;
+                overflow-y: visible;
+            }
+
+            /* 테이블을 카드 레이아웃으로 변경 */
+            table {
+                border: 0;
+                width: 100% !important;
+            }
+
+            table thead {
+                display: none;
+            }
+
+            table tbody {
+                width: 100%;
+            }
+
+            table tbody tr {
+                display: block;
+                margin-bottom: 15px;
+                border: 2px solid #dee2e6;
+                border-radius: 10px;
+                background: white;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                width: 100%;
+                overflow: hidden;
+            }
+
+            table tbody tr td {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                padding: 12px 15px;
+                border-bottom: 1px solid #f0f0f0;
+                width: 100%;
+                font-size: 15px;
+                line-height: 1.5;
+                gap: 10px;
+            }
+
+            table tbody tr td:last-child {
+                border-bottom: none;
+            }
+
+            table tbody tr td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #667eea;
+                font-size: 14px;
+                flex-shrink: 0;
+                min-width: 80px;
+            }
+
+            /* 데이터 부분 스타일 */
+            table tbody tr td strong,
+            table tbody tr td > *:not(.btn-small) {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                word-break: break-word;
+                text-align: right;
+                flex: 1;
+            }
+
+            /* 시리얼 번호 강조 */
+            table tbody tr td:first-child {
+                font-size: 16px;
+                padding: 15px;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-bottom: 2px solid #dee2e6;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            table tbody tr td:first-child::before {
+                color: #495057;
+                width: 100%;
+            }
+
+            table tbody tr td:first-child strong {
+                font-size: 16px;
+                color: #667eea;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                word-break: break-all;
+                width: 100%;
+                text-align: left;
+            }
+
+            /* 상태 뱃지 모바일 최적화 */
+            table tbody tr td .status-badge {
+                display: inline-block;
+                padding: 6px 14px;
+                font-size: 13px;
+            }
+
+            /* 작업 버튼 세로 배치 */
+            table tbody tr td:last-child {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px;
+                background: #f8f9fa;
+                border-top: 1px solid #e9ecef;
+                gap: 8px;
+            }
+
+            table tbody tr td:last-child::before {
+                display: none;
+            }
+
+            .btn-small {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 15px;
+                font-weight: 600;
+                margin: 0;
+            }
+
+            /* 로딩 및 빈 상태 */
+            .loading {
+                display: block !important;
+                text-align: center !important;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                border-radius: 0;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .header p {
+                font-size: 0.85em;
+            }
+
+            .header {
+                padding: 15px 10px;
+            }
+
+            .left-panel, .right-panel {
+                padding: 15px 10px;
+            }
+
+            .section-title {
+                font-size: 1.2em;
+            }
+
+            .stat-card h3 {
+                font-size: 1.3em;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                font-size: 16px; /* iOS에서 자동 줌 방지 */
+            }
+
+            .search-box input {
+                font-size: 16px; /* iOS에서 자동 줌 방지 */
+            }
+
+            /* 카드 내부 데이터 크기 조정 */
+            table tbody tr td {
+                padding: 10px 12px;
+                font-size: 14px;
+                gap: 8px;
+            }
+
+            table tbody tr td::before {
+                font-size: 13px;
+                min-width: 70px;
+            }
+
+            table tbody tr td:first-child {
+                font-size: 15px;
+                padding: 12px;
+                gap: 4px;
+            }
+
+            table tbody tr td:first-child strong {
+                font-size: 15px;
+            }
+
+            /* 버튼 크기 조정 */
+            .btn-small {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            table tbody tr td:last-child {
+                gap: 6px;
+            }
+
+            /* 상태 뱃지 크기 조정 */
+            table tbody tr td .status-badge {
+                padding: 5px 12px;
+                font-size: 12px;
+            }
+
+            /* 카드 간격 조정 */
+            table tbody tr {
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 시리얼 번호 관리 시스템</h1>
+            <p>관리자 대시보드 - 시리얼 번호 추가, 수정, 삭제 및 검증</p>
+        </div>
+
+        <div class="main-content">
+            <!-- 왼쪽 패널: 시리얼 추가 폼 -->
+            <div class="left-panel">
+                <h2 class="section-title">시리얼 번호 추가</h2>
+
+                <div class="alert alert-success" id="addSuccessAlert"></div>
+                <div class="alert alert-error" id="addErrorAlert"></div>
+
+                <form id="addSerialForm">
+                    <div class="form-group">
+                        <label for="serialNumber">시리얼 번호 *</label>
+                        <input type="text" id="serialNumber" placeholder="예: ABC-123-XYZ" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expiryDate">유효기간 *</label>
+                        <input type="date" id="expiryDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">설명 (선택)</label>
+                        <textarea id="description" placeholder="시리얼 번호에 대한 설명을 입력하세요"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">추가하기</button>
+                </form>
+            </div>
+
+            <!-- 오른쪽 패널: 시리얼 목록 -->
+            <div class="right-panel">
+                <h2 class="section-title">시리얼 번호 목록</h2>
+
+                <!-- 통계 -->
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 id="totalCount">0</h3>
+                        <p>전체 시리얼</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="activeCount">0</h3>
+                        <p>활성 시리얼</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="expiredCount">0</h3>
+                        <p>만료된 시리얼</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-success" id="listSuccessAlert"></div>
+                <div class="alert alert-error" id="listErrorAlert"></div>
+
+                <!-- 검색 -->
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 시리얼 번호 검색...">
+                </div>
+
+                <!-- 테이블 -->
+                <div class="table-wrapper">
+                    <table id="serialTable">
+                        <thead>
+                            <tr>
+                                <th>시리얼 번호</th>
+                                <th>유효기간</th>
+                                <th>상태</th>
+                                <th>설명</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serialTableBody">
+                            <tr>
+                                <td colspan="5" class="loading">로딩 중...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let allSerials = [];
+
+        // 페이지 로드 시 시리얼 목록 불러오기
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSerials();
+            setTodayDate();
+        });
+
+        // 오늘 날짜 설정
+        function setTodayDate() {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            document.getElementById('expiryDate').value = dateString;
+        }
+
+        // 시리얼 목록 불러오기
+        async function loadSerials() {
+            try {
+                const response = await fetch(`${API_BASE}/api/serials`);
+                const result = await response.json();
+
+                if (result.success) {
+                    allSerials = result.data;
+                    displaySerials(allSerials);
+                    updateStats(allSerials);
+                } else {
+                    showAlert('listErrorAlert', '시리얼 목록을 불러올 수 없습니다.');
+                }
+            } catch (error) {
+                showAlert('listErrorAlert', '서버 연결 실패: ' + error.message);
+            }
+        }
+
+        // 통계 업데이트
+        function updateStats(serials) {
+            const total = serials.length;
+            const active = serials.filter(s => new Date(s.expiry_date) >= new Date()).length;
+            const expired = total - active;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('activeCount').textContent = active;
+            document.getElementById('expiredCount').textContent = expired;
+        }
+
+        // 시리얼 목록 표시
+        function displaySerials(serials) {
+            const tbody = document.getElementById('serialTableBody');
+
+            if (serials.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">등록된 시리얼 번호가 없습니다.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = serials.map(serial => {
+                const isExpired = new Date(serial.expiry_date) < new Date();
+                const statusClass = isExpired ? 'status-expired' : 'status-active';
+                const statusText = isExpired ? '만료' : '활성';
+
+                return `
+                    <tr>
+                        <td data-label="시리얼 번호"><strong>${serial.serial_number}</strong></td>
+                        <td data-label="유효기간">${serial.expiry_date}</td>
+                        <td data-label="상태"><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td data-label="설명">${serial.description || '-'}</td>
+                        <td data-label="작업">
+                            <button class="btn btn-small btn-info" onclick="verifySerial('${serial.serial_number}')">검증</button>
+                            <button class="btn btn-small btn-success" onclick="editSerial('${serial.serial_number}')">수정</button>
+                            <button class="btn btn-small btn-danger" onclick="deleteSerial('${serial.serial_number}')">삭제</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 시리얼 추가
+        document.getElementById('addSerialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const serialNumber = document.getElementById('serialNumber').value.trim();
+            const expiryDate = document.getElementById('expiryDate').value;
+            const description = document.getElementById('description').value.trim();
+
+            try {
+                const response = await fetch(`${API_BASE}/api/serials`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        serial_number: serialNumber,
+                        expiry_date: expiryDate,
+                        description: description
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('addSuccessAlert', '시리얼 번호가 추가되었습니다!');
+                    document.getElementById('addSerialForm').reset();
+                    setTodayDate();
+                    loadSerials();
+                } else {
+                    showAlert('addErrorAlert', result.message);
+                }
+            } catch (error) {
+                showAlert('addErrorAlert', '서버 연결 실패: ' + error.message);
+            }
+        });
+
+        // 시리얼 검증
+        async function verifySerial(serialNumber) {
+            try {
+                const response = await fetch(`${API_BASE}/api/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ serial_number: serialNumber })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.valid) {
+                        alert(`✅ 유효한 시리얼입니다!\n\n유효기간: ${result.expiry_date}\n남은 일수: ${result.days_remaining}일`);
+                    } else {
+                        alert(`❌ ${result.message}\n\n사유: ${result.reason}`);
+                    }
+                } else {
+                    alert('검증 실패: ' + result.message);
+                }
+            } catch (error) {
+                alert('서버 연결 실패: ' + error.message);
+            }
+        }
+
+        // 시리얼 수정
+        async function editSerial(serialNumber) {
+            const serial = allSerials.find(s => s.serial_number === serialNumber);
+            if (!serial) return;
+
+            const newExpiryDate = prompt('새로운 유효기간을 입력하세요 (YYYY-MM-DD):', serial.expiry_date);
+            if (!newExpiryDate) return;
+
+            const newDescription = prompt('새로운 설명을 입력하세요:', serial.description);
+            if (newDescription === null) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/serials/${serialNumber}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        expiry_date: newExpiryDate,
+                        description: newDescription
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('listSuccessAlert', '시리얼 번호가 수정되었습니다!');
+                    loadSerials();
+                } else {
+                    showAlert('listErrorAlert', result.message);
+                }
+            } catch (error) {
+                showAlert('listErrorAlert', '서버 연결 실패: ' + error.message);
+            }
+        }
+
+        // 시리얼 삭제
+        async function deleteSerial(serialNumber) {
+            if (!confirm(`정말로 "${serialNumber}" 시리얼 번호를 삭제하시겠습니까?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/serials/${serialNumber}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('listSuccessAlert', '시리얼 번호가 삭제되었습니다!');
+                    loadSerials();
+                } else {
+                    showAlert('listErrorAlert', result.message);
+                }
+            } catch (error) {
+                showAlert('listErrorAlert', '서버 연결 실패: ' + error.message);
+            }
+        }
+
+        // 검색 기능
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allSerials.filter(serial =>
+                serial.serial_number.toLowerCase().includes(searchTerm) ||
+                serial.description.toLowerCase().includes(searchTerm)
+            );
+            displaySerials(filtered);
+        });
+
+        // 알림 표시
+        function showAlert(elementId, message) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
