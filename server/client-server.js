@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { verifySerial } = require('./database');
+const { verifySerialWithIP } = require('./database');
 
 const app = express();
 const PORT = process.env.CLIENT_PORT || 8080;
@@ -29,7 +29,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 시리얼 번호 검증 (클라이언트 전용 - 읽기 전용)
+// 시리얼 번호 검증 (클라이언트 전용 - IP 검증 포함)
 app.post('/api/verify', (req, res) => {
   const { serial_number } = req.body;
 
@@ -40,7 +40,16 @@ app.post('/api/verify', (req, res) => {
     });
   }
 
-  verifySerial(serial_number, (err, result) => {
+  // 클라이언트 IP 추출
+  const clientIP = req.headers['x-forwarded-for']?.split(',')[0].trim()
+    || req.connection?.remoteAddress
+    || req.socket?.remoteAddress
+    || req.ip
+    || 'unknown';
+
+  console.log(`[인증 시도] 시리얼: ${serial_number.substring(0, 16)}..., IP: ${clientIP}`);
+
+  verifySerialWithIP(serial_number, clientIP, (err, result) => {
     if (err) {
       return res.status(500).json({
         success: false,
