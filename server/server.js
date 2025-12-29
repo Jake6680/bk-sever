@@ -2,6 +2,8 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+console.log('[[SERVER.JS LOADED]]'); // 파일 로드 확인
+
 const {
   getAllSerials,
   getSerial,
@@ -25,7 +27,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // 로깅 미들웨어
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  console.log(`[Middleware] [${new Date().toISOString()}] ${req.method} ${req.path}`);
+  console.log('[Middleware] req.body:', req.body); // Body 파싱 확인
   next();
 });
 
